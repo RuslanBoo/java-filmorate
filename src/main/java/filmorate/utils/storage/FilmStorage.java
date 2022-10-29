@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-public class FilmStorage implements StorageManager<Film>{
+public class FilmStorage implements StorageManager<Film> {
     private static int nextID = 1;
     private final Map<Integer, Film> films;
 
@@ -27,7 +27,7 @@ public class FilmStorage implements StorageManager<Film>{
 
     @Override
     public Film update(Film film) {
-        if(!films.containsKey(film.getId())){
+        if (!films.containsKey(film.getId())) {
             throw new FilmNotFoundException(String.format("Фильм для обновления с id %d не найден", film.getId()));
         }
         films.put(film.getId(), film);

@@ -1,12 +1,12 @@
 package filmorate.utils.validators;
 
 import javax.validation.Constraint;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
-import java.lang.annotation.*;
-import java.time.LocalDate;
-import java.time.temporal.Temporal;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -20,13 +20,3 @@ public @interface ReleaseDate {
     Class<? extends Payload>[] payload() default {};
 }
 
-class DateReleaseValidator implements ConstraintValidator<ReleaseDate, Temporal> {
-    public static final LocalDate RELEASE_START = LocalDate.of(1895, 12, 28);
-    @Override
-    public void initialize(ReleaseDate constraintAnnotation) {}
-
-    @Override
-    public boolean isValid(Temporal value, ConstraintValidatorContext context) {
-        return value == null || LocalDate.from(value).isAfter(RELEASE_START);
-    }
-}

@@ -23,13 +23,11 @@ public class UserController {
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
-        userStorage.create(user);
-        return user;
+        return userStorage.create(user);
     }
 
     @PutMapping
-    public User updateUser(@Valid @RequestBody User user) throws UserNotFoundException{
-        userStorage.update(user);
-        return user;
+    public User updateUser(@Valid @RequestBody User user) throws UserNotFoundException {
+        return userStorage.update(user);
     }
 }

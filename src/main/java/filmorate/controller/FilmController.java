@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.Collection;
 
 @Slf4j
 @RestController
@@ -17,19 +17,17 @@ public class FilmController {
     private final StorageManager<Film> filmStorage = new FilmStorage();
 
     @GetMapping
-    public Collection<Film> getAllFilms(){
+    public Collection<Film> getAllFilms() {
         return filmStorage.getAll();
     }
 
     @PostMapping
-    public Film addFilm(@Valid @RequestBody Film film){
-        filmStorage.create(film);
-        return film;
+    public Film addFilm(@Valid @RequestBody Film film) {
+        return filmStorage.create(film);
     }
 
     @PutMapping
-    public Film updateFilm(@Valid @RequestBody Film film) throws FilmNotFoundException{
-        filmStorage.update(film);
-        return film;
+    public Film updateFilm(@Valid @RequestBody Film film) throws FilmNotFoundException {
+        return filmStorage.update(film);
     }
 }

@@ -12,7 +12,7 @@
 	<artifactId>filmorate</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>filmorate</name>
-	<description>Filmorate app for Practicum</description>
+	<description>Приложение для оценки фильмов пользователями</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>

@@ -9,13 +9,14 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Slf4j
 public class Film {
 
-    @PositiveOrZero
-    private int id;
+    private @PositiveOrZero Long id;
 
     @NotBlank
     private String name;
@@ -28,4 +29,10 @@ public class Film {
 
     @Positive
     private int duration;
+
+    private Set<Long> usersLike;
+
+    public Film() {
+        this.usersLike = new HashSet<Long>();
+    }
 }

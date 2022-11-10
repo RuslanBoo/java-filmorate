@@ -1,19 +1,22 @@
-package filmorate.utils.storage;
+package filmorate.storage;
 
-import filmorate.utils.exceptions.FilmNotFoundException;
+import filmorate.exceptions.filmExceptions.FilmNotFoundException;
 import filmorate.model.Film;
+import filmorate.storage.interfaces.FilmStorage;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-public class FilmStorage implements StorageManager<Film> {
-    private static int nextID = 1;
-    private final Map<Integer, Film> films;
+@Component
+public class InMemoryFilmStorage implements FilmStorage {
+    private static Long nextID = 1L;
+    private final Map<Long, Film> films;
 
-    public FilmStorage() {
+    public InMemoryFilmStorage() {
         films = new HashMap<>();
     }
 
@@ -39,5 +42,13 @@ public class FilmStorage implements StorageManager<Film> {
     public Collection<Film> getAll() {
         log.debug("Текущее количество фильмов: {}", films.size());
         return films.values();
+    }
+
+    @Override
+    public Film getById(Long id) {
+        if (!films.containsKey(id)) {
+            throw new FilmNotFoundException(String.format("Фильм для обновления с id %d не найден", id));
+        }
+        return films.get(id);
     }
 }

@@ -12,8 +12,8 @@ import java.util.Set;
 
 @Data
 public class User {
-
-    private @PositiveOrZero Long id;
+    @PositiveOrZero
+    private Long id;
 
     @Email
     private String email;
@@ -33,6 +33,6 @@ public class User {
         this.login = login;
         this.name = (name == null || name.isBlank()) ? login : name;
         this.birthday = birthday;
-        this.friends = new HashSet<Long>();
+        this.friends = new HashSet<>();
     }
 }

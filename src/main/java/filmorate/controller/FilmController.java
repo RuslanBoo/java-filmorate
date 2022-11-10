@@ -1,16 +1,13 @@
 package filmorate.controller;
 
 import filmorate.exceptions.filmExceptions.FilmNotFoundException;
-import filmorate.model.ErrorResponse;
 import filmorate.model.Film;
 import filmorate.service.interfaces.LikesManager;
 import filmorate.storage.interfaces.StorageManager;
 import filmorate.utils.enums.FilmSort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,8 +15,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.validation.Valid;
 import java.util.Collection;
 
@@ -66,11 +63,5 @@ public class FilmController {
     @DeleteMapping("/{id}/like/{userId}")
     public void removeLike(@PathVariable(name = "id") Long filmId, @PathVariable(name = "userId") Long userId) {
         filmService.removeLike(userId, filmId);
-    }
-
-    @ExceptionHandler({FilmNotFoundException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleError(final RuntimeException e) {
-        return new ErrorResponse("error", e.getMessage());
     }
 }

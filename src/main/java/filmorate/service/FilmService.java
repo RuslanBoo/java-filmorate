@@ -37,12 +37,12 @@ public class FilmService implements LikesManager {
         return filmStorage
                 .getAll()
                 .stream()
-                .sorted((f0, f1) -> {
-                            int comp = Integer.compare(f1.getUsersLike().size(), f0.getUsersLike().size());
+                .sorted((film0, film1) -> {
+                            int compare = Integer.compare(film1.getUsersLike().size(), film0.getUsersLike().size());
                             if (sort == FilmSort.DESC) {
-                                comp *= -1;
+                                compare *= -1;
                             }
-                            return comp;
+                            return compare;
                         }
                 )
                 .limit(size)

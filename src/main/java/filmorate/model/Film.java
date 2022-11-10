@@ -33,6 +33,6 @@ public class Film {
     private Set<Long> usersLike;
 
     public Film() {
-        this.usersLike = new HashSet<Long>();
+        this.usersLike = new HashSet<>();
     }
 }

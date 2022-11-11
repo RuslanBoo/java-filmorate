@@ -15,8 +15,8 @@ import java.util.Set;
 @Data
 @Slf4j
 public class Film {
-
-    private @PositiveOrZero Long id;
+    @PositiveOrZero
+    private Long id;
 
     @NotBlank
     private String name;

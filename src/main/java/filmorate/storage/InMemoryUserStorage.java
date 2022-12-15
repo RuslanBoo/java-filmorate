@@ -49,7 +49,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getById(Long id) {
+    public User findById(Long id) {
         if (!users.containsKey(id)) {
             throw new UserNotFoundException(String.format("Пользователь для обновления с id %d не найден", id));
         }

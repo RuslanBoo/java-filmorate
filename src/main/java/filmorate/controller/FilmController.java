@@ -35,14 +35,14 @@ public class FilmController {
 
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable Long id) {
-        return filmStorage.getById(id);
+        return filmStorage.findById(id);
     }
 
     @GetMapping("/popular")
     public Collection<Film> getPopular(
             @RequestParam(value = "count", defaultValue = "10", required = false) Integer count
     ) {
-        return filmService.getPopular(count, FilmSort.ASC);
+        return filmService.getPopular(count, FilmSort.DESC);
     }
 
     @PostMapping

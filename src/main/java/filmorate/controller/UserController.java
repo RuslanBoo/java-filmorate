@@ -34,7 +34,7 @@ public class UserController {
     @GetMapping("/{id}")
     public User getUserById(
             @PathVariable(name = "id") Long userId) {
-        return userStorage.getById(userId);
+        return userStorage.findById(userId);
     }
 
     @GetMapping("/{id}/friends")

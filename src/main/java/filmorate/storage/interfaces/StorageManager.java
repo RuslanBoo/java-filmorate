@@ -9,5 +9,5 @@ public interface StorageManager<T> {
 
     Collection<T> getAll();
 
-    T getById(Long id);
+    T findById(Long id);
 }

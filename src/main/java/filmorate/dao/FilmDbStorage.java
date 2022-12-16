@@ -4,7 +4,6 @@ import filmorate.exceptions.filmExceptions.FilmNotFoundException;
 import filmorate.extractor.FilmExtractor;
 import filmorate.model.Film;
 import filmorate.model.Genre;
-import filmorate.model.Like;
 import filmorate.storage.interfaces.FilmStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
@@ -15,7 +14,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -97,7 +95,7 @@ public class FilmDbStorage implements FilmStorage {
                 "WHERE f.film_id = ?";
 
         ArrayList<Film> result = jdbcTemplate.query(sqlQuery, new FilmExtractor(), id);
-        if(result == null || result.size() == 0){
+        if(result == null || result.isEmpty()){
             throw new FilmNotFoundException("Фильм не найден");
         } else {
             return result.get(0);

@@ -41,9 +41,12 @@ public class UserDbService implements FriendshipManager {
                     friendId
             );
 
+            if(friendship == null){
+                throw new FriendshipNotFoundException("Заявка не найдена");
+            }
+
             if (friendship.getUserTo() == userId && !friendship.isApplied()) {
-                String sqlInsertQuery = "UPDATE user_friend SET is_applied = true " +
-                        "WHERE user_from = ? AND user_to = ?";
+                String sqlInsertQuery = "UPDATE user_friend SET is_applied = true WHERE user_from = ? AND user_to = ?";
 
                 jdbcTemplate.update(sqlInsertQuery,
                         userId,
@@ -79,6 +82,10 @@ public class UserDbService implements FriendshipManager {
                     userId,
                     friendId
             );
+
+            if(friendship == null){
+                throw new FriendshipNotFoundException("Заявка не найдена");
+            }
 
             if (friendship.getUserFrom() == userId) {
                 String sqlDeleteQuery = "DELETE FROM user_friend " +

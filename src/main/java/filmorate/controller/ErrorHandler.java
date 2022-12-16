@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Objects;
+
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
@@ -120,7 +122,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleDataIntegrityViolationError(final DataIntegrityViolationException exception) {
-        log.error(String.format(exception.getMessage()), exception);
+        log.error(String.format(Objects.requireNonNull(exception.getMessage())), exception);
         return new ErrorResponse("error", exception.getMessage());
     }
 

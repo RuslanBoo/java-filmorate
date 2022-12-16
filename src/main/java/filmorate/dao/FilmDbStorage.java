@@ -1,5 +1,6 @@
 package filmorate.dao;
 
+import filmorate.exceptions.filmExceptions.FilmNotFoundException;
 import filmorate.extractor.FilmExtractor;
 import filmorate.model.Film;
 import filmorate.model.Genre;
@@ -97,7 +98,7 @@ public class FilmDbStorage implements FilmStorage {
 
         ArrayList<Film> result = jdbcTemplate.query(sqlQuery, new FilmExtractor(), id);
         if(result == null || result.size() == 0){
-            return null;
+            throw new FilmNotFoundException("Фильм не найден");
         } else {
             return result.get(0);
         }

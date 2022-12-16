@@ -46,7 +46,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User create(User user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        String sqlQuery = "INSERT INTO USERS (EMAIL, LOGIN, NAME, BIRTHDAY) " +
+        String sqlQuery = "INSERT INTO users (email, login, name, birthday) " +
                 "VALUES (?, ?, ?, ?)";
 
         jdbcTemplate.update(connection -> {
@@ -66,9 +66,9 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User update(User user) {
         findById(user.getId());
-        String sqlUpdateQuery = "UPDATE USERS " +
-                "SET USER_ID = ?, EMAIL = ?, LOGIN = ?, NAME = ?, BIRTHDAY = ? " +
-                "WHERE USER_ID = ?";
+        String sqlUpdateQuery = "UPDATE users " +
+                "SET user_id = ?, email = ?, login = ?, name = ?, birthday = ? " +
+                "WHERE user_id = ?";
 
         jdbcTemplate.update(sqlUpdateQuery,
                 user.getId(),
@@ -84,14 +84,14 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Collection<User> getAll() {
-        String sqlQuery = "SELECT USER_ID, EMAIL, LOGIN, NAME, BIRTHDAY FROM USERS";
+        String sqlQuery = "SELECT user_id, email, login, name, birthday FROM users";
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser);
     }
 
     @Override
     public User findById(Long id) {
         try {
-            String sqlQuery = "SELECT USER_ID, EMAIL, LOGIN, NAME, BIRTHDAY FROM USERS WHERE USER_ID = ?";
+            String sqlQuery = "SELECT user_id, email, login, name, birthday FROM users WHERE user_id = ?";
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             throw new UserNotFoundException("Пользователь не найден");

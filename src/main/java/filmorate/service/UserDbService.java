@@ -28,10 +28,10 @@ public class UserDbService implements FriendshipManager {
     @Override
     public void addFriend(Long userId, Long friendId) {
         try {
-            String sqlSelectQuery = "SELECT USER_FROM, USER_TO " +
+            String sqlSelectQuery = "SELECT user_from, user_to " +
                     "FROM user_friend " +
-                    "WHERE ( USER_FROM = ? AND USER_TO = ? )" +
-                    "OR ( USER_TO = ? AND USER_FROM = ? )";
+                    "WHERE ( user_from = ? AND user_to = ? )" +
+                    "OR ( user_to = ? AND user_from = ? )";
 
             Friendship friendship = jdbcTemplate.queryForObject(sqlSelectQuery,
                     userDbStorage::mapRowToFriendship,
@@ -42,8 +42,8 @@ public class UserDbService implements FriendshipManager {
             );
 
             if (friendship.getUserTo() == userId && !friendship.isApplied()) {
-                String sqlInsertQuery = "UPDATE user_friend SET IS_APPLIED = true " +
-                        "WHERE USER_FROM = ? AND USER_TO = ?";
+                String sqlInsertQuery = "UPDATE user_friend SET is_applied = true " +
+                        "WHERE user_from = ? AND user_to = ?";
 
                 jdbcTemplate.update(sqlInsertQuery,
                         userId,
@@ -55,7 +55,7 @@ public class UserDbService implements FriendshipManager {
             }
 
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
-            String sqlInsertQuery = "INSERT INTO user_friend (USER_FROM, USER_TO) VALUES (?, ?)";
+            String sqlInsertQuery = "INSERT INTO user_friend (user_from, user_to) VALUES (?, ?)";
 
             jdbcTemplate.update(sqlInsertQuery,
                     userId,
@@ -67,10 +67,10 @@ public class UserDbService implements FriendshipManager {
     @Override
     public void removeFriend(Long userId, Long friendId) {
         try {
-            String sqlSelectQuery = "SELECT USER_FROM, USER_TO " +
+            String sqlSelectQuery = "SELECT user_from, user_to " +
                     "FROM user_friend " +
-                    "WHERE ( USER_FROM = ? AND USER_TO = ? )" +
-                    "OR ( USER_TO = ? AND USER_FROM = ? )";
+                    "WHERE ( user_from = ? AND user_to = ? )" +
+                    "OR ( user_to = ? AND user_from = ? )";
 
             Friendship friendship = jdbcTemplate.queryForObject(sqlSelectQuery,
                     userDbStorage::mapRowToFriendship,
@@ -82,22 +82,22 @@ public class UserDbService implements FriendshipManager {
 
             if (friendship.getUserFrom() == userId) {
                 String sqlDeleteQuery = "DELETE FROM user_friend " +
-                        "WHERE USER_FROM = ? AND USER_TO = ?";
+                        "WHERE user_from = ? AND user_to = ?";
                 jdbcTemplate.update(sqlDeleteQuery,
                         userId,
                         friendId
                 );
 
                 if (friendship.isApplied()) {
-                    String sqlInsertNewFriendshipQuery = "INSERT INTO user_friend (USER_FROM, USER_TO) VALUES (?, ?)";
+                    String sqlInsertNewFriendshipQuery = "INSERT INTO user_friend (user_from, user_to) VALUES (?, ?)";
                     jdbcTemplate.update(sqlInsertNewFriendshipQuery,
                             friendId,
                             userId
                     );
                 }
             } else if (friendship.getUserTo() == userId && friendship.isApplied()) {
-                String sqlUpdateQuery = "UPDATE user_friend SET IS_APPLIED = false " +
-                        "WHERE USER_FROM = ? AND USER_TO = ?";
+                String sqlUpdateQuery = "UPDATE user_friend SET is_applied = false " +
+                        "WHERE user_from = ? AND user_to = ?";
 
                 jdbcTemplate.update(sqlUpdateQuery,
                         friendId,
@@ -112,11 +112,11 @@ public class UserDbService implements FriendshipManager {
 
     @Override
     public Collection<User> getFriends(Long userId) {
-        String sqlQuery = "SELECT u.USER_ID, u.EMAIL, u.LOGIN, u.NAME, u.BIRTHDAY " +
-                "FROM USERS as u " +
+        String sqlQuery = "SELECT u.user_id, u.email, u.login, u.name, u.birthday " +
+                "FROM users as u " +
                 "JOIN user_friend AS uf " +
-                "ON (u.user_id = uf.USER_TO AND uf.USER_FROM = ?) " +
-                "OR (u.user_id = uf.USER_FROM AND uf.IS_APPLIED = true AND uf.USER_TO = ?)";
+                "ON (u.user_id = uf.user_to AND uf.user_from = ?) " +
+                "OR (u.user_id = uf.user_from AND uf.is_applied = true AND uf.user_to = ?)";
 
         return jdbcTemplate.query(sqlQuery, userDbStorage::mapRowToUser, userId, userId);
     }

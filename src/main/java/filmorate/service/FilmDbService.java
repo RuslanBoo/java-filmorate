@@ -1,6 +1,5 @@
 package filmorate.service;
 
-import filmorate.dao.FilmDbStorage;
 import filmorate.exceptions.likeException.LikeNotFoundException;
 import filmorate.extractor.FilmExtractor;
 import filmorate.model.Film;
@@ -21,11 +20,10 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class FilmDbService implements LikesManager {
     private final JdbcTemplate jdbcTemplate;
-    private final FilmDbStorage filmStorage;
 
     @Override
     public void addLike(Long userLikedId, Long filmId) {
-        String sqlQuery = "INSERT INTO film_like (FILM_ID, USER_ID) VALUES (?, ?)";
+        String sqlQuery = "INSERT INTO film_like (film_id, user_id) VALUES (?, ?)";
 
         jdbcTemplate.update(sqlQuery,
                 filmId,
@@ -35,11 +33,11 @@ public class FilmDbService implements LikesManager {
 
     @Override
     public void removeLike(Long userLikedId, Long filmId) {
-        String sqlSelectQuery = "SELECT film_id, user_id FROM film_like WHERE FILM_ID = ? AND USER_ID = ?";
+        String sqlSelectQuery = "SELECT film_id, user_id FROM film_like WHERE film_id = ? AND user_id = ?";
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sqlSelectQuery, filmId, userLikedId);
 
         if (sqlRowSet.first()) {
-            String sqlDeleteQuery = "DELETE FROM film_like WHERE FILM_ID = ? AND USER_ID = ?";
+            String sqlDeleteQuery = "DELETE FROM film_like WHERE film_id = ? AND user_id = ?";
 
             jdbcTemplate.update(sqlDeleteQuery,
                     filmId,
@@ -53,14 +51,14 @@ public class FilmDbService implements LikesManager {
     @Override
     public Collection<Film> getPopular(Integer size, FilmSort sort) {
 
-        String sqlQuery = "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, fr.RATING_ID, m.NAME AS rating_name, fg.GENRE_ID, g.NAME AS genre_name, COUNT(fl.user_id) AS count " +
+        String sqlQuery = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, fr.rating_id, m.name AS rating_name, fg.genre_id, g.name AS genre_name, COUNT(fl.user_id) AS count " +
                 "FROM films AS f " +
-                "LEFT JOIN film_rating AS fr ON fr.FILM_ID = f.FILM_ID " +
-                "LEFT JOIN mpa AS m ON m.RATING_ID = fr.RATING_ID " +
-                "LEFT JOIN film_genre AS fg ON fg.FILM_ID = f.FILM_ID " +
+                "LEFT JOIN film_rating AS fr ON fr.film_id = f.film_id " +
+                "LEFT JOIN mpa AS m ON m.rating_id = fr.rating_id " +
+                "LEFT JOIN film_genre AS fg ON fg.film_id = f.film_id " +
                 "LEFT JOIN film_like AS fl ON fl.film_id = f.film_id " +
-                "LEFT JOIN genres AS g ON g.GENRE_ID = fg.GENRE_ID " +
-                "GROUP BY f.FILM_ID " +
+                "LEFT JOIN genres AS g ON g.genre_id = fg.genre_id " +
+                "GROUP BY f.film_id " +
                 "ORDER BY COUNT(fl.user_id) DESC " +
                 "LIMIT ?";
 

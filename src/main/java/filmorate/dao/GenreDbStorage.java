@@ -40,14 +40,14 @@ public class GenreDbStorage implements GenresStorage {
 
     @Override
     public Collection<Genre> getAll() {
-        String sqlQuery = "SELECT GENRE_ID, NAME FROM GENRES";
+        String sqlQuery = "SELECT genre_id, name FROM genres";
         return jdbcTemplate.query(sqlQuery, this::mapRowToGenre);
     }
 
     @Override
     public Genre findById(Long id) {
         try {
-            String sqlQuery = "SELECT GENRE_ID, NAME FROM GENRES WHERE GENRE_ID = ?";
+            String sqlQuery = "SELECT genre_id, name FROM genres WHERE genre_id = ?";
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToGenre, id);
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             throw new GenreNotFoundException("Жанр не найден");

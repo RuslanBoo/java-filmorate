@@ -26,25 +26,25 @@ public class MpaDbStorage implements MpaStorage {
     @Override
     public Mpa create(Mpa mpa) {
         log.error("Метод create не поддерживается в текущей реализации");
-        throw new RuntimeException("Метод не поддерживается в текущей реализации");
+        throw new RuntimeException("Метод create не поддерживается в текущей реализации");
     }
 
     @Override
     public Mpa update(Mpa mpa) {
         log.error("Метод update не поддерживается в текущей реализации");
-        throw new RuntimeException("Метод не поддерживается в текущей реализации");
+        throw new RuntimeException("Метод update не поддерживается в текущей реализации");
     }
 
     @Override
     public Collection<Mpa> getAll() {
-        String sqlQuery = "SELECT RATING_ID, NAME FROM MPA";
+        String sqlQuery = "SELECT rating_id, name FROM mpa";
         return jdbcTemplate.query(sqlQuery, this::mapRowToMpa);
     }
 
     @Override
     public Mpa findById(Long id) {
         try {
-            String sqlQuery = "SELECT RATING_ID, NAME FROM MPA WHERE RATING_ID = ?";
+            String sqlQuery = "SELECT rating_id, name FROM mpa WHERE rating_id = ?";
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToMpa, id);
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             throw new MpaNotFoundException("Рейтинг не найден");

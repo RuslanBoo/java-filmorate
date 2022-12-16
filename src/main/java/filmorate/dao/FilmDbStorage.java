@@ -29,19 +29,11 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final GenreDbStorage genreDbStorage;
-
-    public Like mapRowToLike(ResultSet resultSet, int rowNum) throws SQLException {
-        return Like.builder()
-                .filmId(resultSet.getLong("film_id"))
-                .userId(resultSet.getLong("user_id"))
-                .build();
-    }
 
     @Override
     public Film create(Film film) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        String sqlInsertQuery = "INSERT INTO FILMS (NAME, DESCRIPTION, RELEASE_DATE, DURATION) " +
+        String sqlInsertQuery = "INSERT INTO films (name, description, release_date, duration) " +
                 "VALUES (?, ?, ?, ?)";
 
         jdbcTemplate.update(connection -> {
@@ -62,9 +54,9 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
-        String sqlFilmUpdateQuery = "UPDATE FILMS AS f " +
-                "SET FILM_ID = ?, NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ? " +
-                "WHERE FILM_ID = ?";
+        String sqlFilmUpdateQuery = "UPDATE films AS f " +
+                "SET film_id = ?, name = ?, description = ?, release_date = ?, duration = ? " +
+                "WHERE film_id = ?";
 
         jdbcTemplate.update(sqlFilmUpdateQuery,
                 film.getId(),
@@ -83,27 +75,32 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getAll() {
-        String sqlQuery = "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, fr.RATING_ID, m.NAME AS rating_name, fg.GENRE_ID, g.NAME AS genre_name " +
+        String sqlQuery = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, fr.rating_id, m.name AS rating_name, fg.genre_id, g.name AS genre_name " +
                 "FROM films AS f " +
-                "LEFT JOIN film_rating AS fr ON fr.FILM_ID = f.FILM_ID " +
-                "LEFT JOIN mpa AS m ON m.RATING_ID = fr.RATING_ID " +
-                "LEFT JOIN film_genre AS fg ON fg.FILM_ID = f.FILM_ID " +
-                "LEFT JOIN genres AS g ON g.GENRE_ID = fg.GENRE_ID ";
+                "LEFT JOIN film_rating AS fr ON fr.film_id = f.film_id " +
+                "LEFT JOIN mpa AS m ON m.rating_id = fr.rating_id " +
+                "LEFT JOIN film_genre AS fg ON fg.film_id = f.film_id " +
+                "LEFT JOIN genres AS g ON g.genre_id = fg.genre_id ";
 
         return jdbcTemplate.query(sqlQuery, new FilmExtractor());
     }
 
     @Override
     public Film findById(Long id) {
-        String sqlQuery = "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, fr.RATING_ID, m.NAME AS rating_name, fg.GENRE_ID, g.NAME AS genre_name " +
+        String sqlQuery = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, fr.rating_id, m.name AS rating_name, fg.genre_id, g.name AS genre_name " +
                 "FROM films AS f " +
-                "LEFT JOIN film_rating AS fr ON fr.FILM_ID = f.FILM_ID " +
-                "LEFT JOIN mpa AS m ON m.RATING_ID = fr.RATING_ID " +
-                "LEFT JOIN film_genre AS fg ON fg.FILM_ID = f.FILM_ID " +
-                "LEFT JOIN genres AS g ON g.GENRE_ID = fg.GENRE_ID " +
-                "WHERE f.FILM_ID = ?";
+                "LEFT JOIN film_rating AS fr ON fr.film_id = f.film_id " +
+                "LEFT JOIN mpa AS m ON m.rating_id = fr.rating_id " +
+                "LEFT JOIN film_genre AS fg ON fg.film_id = f.film_id " +
+                "LEFT JOIN genres AS g ON g.genre_id = fg.genre_id " +
+                "WHERE f.film_id = ?";
 
-        return jdbcTemplate.query(sqlQuery, new FilmExtractor(), id).get(0);
+        ArrayList<Film> result = jdbcTemplate.query(sqlQuery, new FilmExtractor(), id);
+        if(result == null || result.size() == 0){
+            return null;
+        } else {
+            return result.get(0);
+        }
     }
 
     public void updateFilmGenres(Film film) {

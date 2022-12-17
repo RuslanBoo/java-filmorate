@@ -10,13 +10,15 @@ import javax.validation.constraints.PositiveOrZero;
 @Data
 @Builder
 @Slf4j
-public class Like {
+public class Friend {
 
     @NonNull
     @PositiveOrZero
-    private long filmId;
+    private long userFrom;
 
     @NonNull
     @PositiveOrZero
-    private long userId;
+    private long userTo;
+
+    private boolean isApplied;
 }

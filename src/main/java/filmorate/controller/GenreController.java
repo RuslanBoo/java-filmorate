@@ -1,7 +1,7 @@
 package filmorate.controller;
 
 import filmorate.model.Genre;
-import filmorate.storage.interfaces.StorageManager;
+import filmorate.service.interfaces.GenreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,16 +16,16 @@ import java.util.Collection;
 @RequestMapping("/genres")
 @RequiredArgsConstructor
 public class GenreController {
-    private final StorageManager<Genre> genreStorage;
+    private final GenreService genreService;
 
     @GetMapping
     public Collection<Genre> getAllGenres() {
-        return genreStorage.getAll();
+        return genreService.getAll();
     }
 
     @GetMapping("/{id}")
     public Genre getGenreById(@PathVariable Long id) {
-        return genreStorage.findById(id);
+        return genreService.findById(id);
     }
 }
 

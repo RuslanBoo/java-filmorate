@@ -1,15 +1,15 @@
 package filmorate.controller;
 
-import filmorate.exceptions.filmExceptions.FilmNotFoundException;
-import filmorate.exceptions.filmExceptions.GenreNotFoundException;
-import filmorate.exceptions.filmExceptions.MpaNotFoundException;
-import filmorate.exceptions.friendshipException.FriendshipAlreadyExistException;
-import filmorate.exceptions.friendshipException.FriendshipNotFoundException;
-import filmorate.exceptions.likeException.LikeNotFoundException;
-import filmorate.exceptions.userExceptions.UserAlreadyInFriendsException;
-import filmorate.exceptions.userExceptions.UserNotFoundException;
-import filmorate.exceptions.userExceptions.UserNotFoundInFriendsException;
 import filmorate.model.ErrorResponse;
+import filmorate.utils.exceptions.filmExceptions.FilmNotFoundException;
+import filmorate.utils.exceptions.filmExceptions.GenreNotFoundException;
+import filmorate.utils.exceptions.filmExceptions.MpaNotFoundException;
+import filmorate.utils.exceptions.friendshipException.FriendshipAlreadyExistException;
+import filmorate.utils.exceptions.friendshipException.FriendshipNotFoundException;
+import filmorate.utils.exceptions.likeException.LikeNotFoundException;
+import filmorate.utils.exceptions.userExceptions.UserAlreadyInFriendsException;
+import filmorate.utils.exceptions.userExceptions.UserNotFoundException;
+import filmorate.utils.exceptions.userExceptions.UserNotFoundInFriendsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;

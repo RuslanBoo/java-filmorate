@@ -1,9 +1,7 @@
 package filmorate.dao;
 
-import filmorate.exceptions.userExceptions.UserNotFoundException;
-import filmorate.model.Friendship;
 import filmorate.model.User;
-import filmorate.storage.interfaces.UserStorage;
+import filmorate.utils.interfaces.UserStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -36,13 +34,6 @@ public class UserDbStorage implements UserStorage {
                 .build();
     }
 
-    public Friendship mapRowToFriendship(ResultSet resultSet, int rowNum) throws SQLException {
-        return Friendship.builder()
-                .userFrom(resultSet.getLong("user_from"))
-                .userTo(resultSet.getLong("user_to"))
-                .build();
-    }
-
     @Override
     public User create(User user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -64,8 +55,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User update(User user) {
-        findById(user.getId());
+    public User update(User user) throws EmptyResultDataAccessException {
         String sqlUpdateQuery = "UPDATE users " +
                 "SET user_id = ?, email = ?, login = ?, name = ?, birthday = ? " +
                 "WHERE user_id = ?";
@@ -89,12 +79,19 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User findById(Long id) {
-        try {
-            String sqlQuery = "SELECT user_id, email, login, name, birthday FROM users WHERE user_id = ?";
-            return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
-        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
-            throw new UserNotFoundException("Пользователь не найден");
-        }
+    public User findById(Long id) throws EmptyResultDataAccessException {
+        String sqlQuery = "SELECT user_id, email, login, name, birthday FROM users WHERE user_id = ?";
+        return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
+    }
+
+    @Override
+    public Collection<User> getFriends(Long userId) {
+        String sqlQuery = "SELECT u.user_id, u.email, u.login, u.name, u.birthday " +
+                "FROM users as u " +
+                "JOIN user_friend AS uf " +
+                "ON (u.user_id = uf.user_to AND uf.user_from = ?) " +
+                "OR (u.user_id = uf.user_from AND uf.is_applied = true AND uf.user_to = ?)";
+
+        return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId, userId);
     }
 }

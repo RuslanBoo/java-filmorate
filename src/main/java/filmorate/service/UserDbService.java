@@ -1,16 +1,18 @@
 package filmorate.service;
 
-import filmorate.dao.UserDbStorage;
-import filmorate.exceptions.friendshipException.FriendshipAlreadyExistException;
-import filmorate.exceptions.friendshipException.FriendshipNotFoundException;
-import filmorate.model.Friendship;
+import filmorate.model.Friend;
 import filmorate.model.User;
-import filmorate.service.interfaces.FriendshipManager;
+import filmorate.service.interfaces.FriendManager;
+import filmorate.service.interfaces.UserService;
+import filmorate.utils.exceptions.friendshipException.FriendshipAlreadyExistException;
+import filmorate.utils.exceptions.friendshipException.FriendshipNotFoundException;
+import filmorate.utils.exceptions.userExceptions.UserNotFoundException;
+import filmorate.utils.interfaces.FriendStorage;
+import filmorate.utils.interfaces.UserStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -21,118 +23,69 @@ import static java.util.stream.Collectors.toList;
 @Service
 @Primary
 @RequiredArgsConstructor
-public class UserDbService implements FriendshipManager {
-    private final UserDbStorage userDbStorage;
-    private final JdbcTemplate jdbcTemplate;
-
-    @Override
-    public void addFriend(Long userId, Long friendId) {
-        try {
-            String sqlSelectQuery = "SELECT user_from, user_to " +
-                    "FROM user_friend " +
-                    "WHERE ( user_from = ? AND user_to = ? )" +
-                    "OR ( user_to = ? AND user_from = ? )";
-
-            Friendship friendship = jdbcTemplate.queryForObject(sqlSelectQuery,
-                    userDbStorage::mapRowToFriendship,
-                    userId,
-                    friendId,
-                    userId,
-                    friendId
-            );
-
-            if(friendship == null){
-                throw new FriendshipNotFoundException("Заявка не найдена");
-            }
-
-            if (friendship.getUserTo() == userId && !friendship.isApplied()) {
-                String sqlInsertQuery = "UPDATE user_friend SET is_applied = true WHERE user_from = ? AND user_to = ?";
-
-                jdbcTemplate.update(sqlInsertQuery,
-                        userId,
-                        friendId
-                );
-            } else {
-                log.error(String.format("Пользоватеть с id: %d уже отправил заявку в друзья пользователю с id: %d", userId, friendId));
-                throw new FriendshipAlreadyExistException("Заявка в друзья уже отправлена");
-            }
-
-        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
-            String sqlInsertQuery = "INSERT INTO user_friend (user_from, user_to) VALUES (?, ?)";
-
-            jdbcTemplate.update(sqlInsertQuery,
-                    userId,
-                    friendId
-            );
-        }
-    }
+public class UserDbService implements UserService {
+    private final UserStorage userStorage;
+    private final FriendStorage friendStorage;
 
     @Override
     public void removeFriend(Long userId, Long friendId) {
+        friendStorage.removeFriend(userId, friendId);
+    }
+
+    public User create(User user) {
+        return userStorage.create(user);
+    }
+
+    public User update(User user) {
         try {
-            String sqlSelectQuery = "SELECT user_from, user_to " +
-                    "FROM user_friend " +
-                    "WHERE ( user_from = ? AND user_to = ? )" +
-                    "OR ( user_to = ? AND user_from = ? )";
-
-            Friendship friendship = jdbcTemplate.queryForObject(sqlSelectQuery,
-                    userDbStorage::mapRowToFriendship,
-                    userId,
-                    friendId,
-                    userId,
-                    friendId
-            );
-
-            if(friendship == null){
-                throw new FriendshipNotFoundException("Заявка не найдена");
-            }
-
-            if (friendship.getUserFrom() == userId) {
-                String sqlDeleteQuery = "DELETE FROM user_friend " +
-                        "WHERE user_from = ? AND user_to = ?";
-                jdbcTemplate.update(sqlDeleteQuery,
-                        userId,
-                        friendId
-                );
-
-                if (friendship.isApplied()) {
-                    String sqlInsertNewFriendshipQuery = "INSERT INTO user_friend (user_from, user_to) VALUES (?, ?)";
-                    jdbcTemplate.update(sqlInsertNewFriendshipQuery,
-                            friendId,
-                            userId
-                    );
-                }
-            } else if (friendship.getUserTo() == userId && friendship.isApplied()) {
-                String sqlUpdateQuery = "UPDATE user_friend SET is_applied = false " +
-                        "WHERE user_from = ? AND user_to = ?";
-
-                jdbcTemplate.update(sqlUpdateQuery,
-                        friendId,
-                        userId
-                );
-            }
+            findById(user.getId());
+            userStorage.update(user);
+            return findById(user.getId());
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
-            log.error(String.format("Пользоватеть с id: %d не отправлял заявку в друзья пользователю с id: %d", userId, friendId));
-            throw new FriendshipNotFoundException("Заявка в друзья  не найдена");
+            throw new UserNotFoundException("Пользователь не найден");
+        }
+    }
+
+    public Collection<User> getAll() {
+        return userStorage.getAll();
+    }
+
+    public User findById(Long id) {
+        try {
+            return userStorage.findById(id);
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
+            throw new UserNotFoundException("Пользователь не найден");
         }
     }
 
     @Override
     public Collection<User> getFriends(Long userId) {
-        String sqlQuery = "SELECT u.user_id, u.email, u.login, u.name, u.birthday " +
-                "FROM users as u " +
-                "JOIN user_friend AS uf " +
-                "ON (u.user_id = uf.user_to AND uf.user_from = ?) " +
-                "OR (u.user_id = uf.user_from AND uf.is_applied = true AND uf.user_to = ?)";
-
-        return jdbcTemplate.query(sqlQuery, userDbStorage::mapRowToUser, userId, userId);
+        return userStorage.getFriends(userId);
     }
 
     @Override
     public Collection<User> getCommonFriends(Long userId, Long otherUserId) {
-        return getFriends(userId)
+        return userStorage.getFriends(userId)
                 .stream()
-                .filter(getFriends(otherUserId)::contains)
+                .filter(userStorage.getFriends(otherUserId)::contains)
                 .collect(toList());
+    }
+
+    @Override
+    public void addFriend(Long userId, Long friendId) {
+        try {
+            Friend friendship = friendStorage.findFriend(userId, friendId);
+
+            if (friendship == null) {
+                throw new FriendshipNotFoundException("Заявка не найдена");
+            } else if (friendship.getUserTo() == userId && !friendship.isApplied()) {
+                friendStorage.applyFriend(userId, friendId);
+            } else {
+                log.error(String.format("Пользоватеть с id: %d уже отправил заявку в друзья пользователю с id: %d", userId, friendId));
+                throw new FriendshipAlreadyExistException("Заявка в друзья уже отправлена");
+            }
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
+            friendStorage.addFriend(userId, friendId);
+        }
     }
 }

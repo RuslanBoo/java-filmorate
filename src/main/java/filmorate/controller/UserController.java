@@ -1,9 +1,8 @@
 package filmorate.controller;
 
-import filmorate.exceptions.userExceptions.UserNotFoundException;
 import filmorate.model.User;
-import filmorate.service.interfaces.FriendshipManager;
-import filmorate.storage.interfaces.StorageManager;
+import filmorate.service.interfaces.UserService;
+import filmorate.utils.exceptions.userExceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,18 +22,17 @@ import java.util.Collection;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final StorageManager<User> userStorage;
-    private final FriendshipManager userService;
+    private final UserService userService;
 
     @GetMapping
     public Collection<User> getAllUsers() {
-        return userStorage.getAll();
+        return userService.getAll();
     }
 
     @GetMapping("/{id}")
     public User getUserById(
             @PathVariable(name = "id") Long userId) {
-        return userStorage.findById(userId);
+        return userService.findById(userId);
     }
 
     @GetMapping("/{id}/friends")
@@ -52,12 +50,12 @@ public class UserController {
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
-        return userStorage.create(user);
+        return userService.create(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) throws UserNotFoundException {
-        return userStorage.update(user);
+        return userService.update(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")

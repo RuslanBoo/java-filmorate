@@ -1,67 +1,111 @@
 package filmorate.service;
 
-import filmorate.exceptions.likeException.LikeNotFoundException;
-import filmorate.extractor.FilmExtractor;
 import filmorate.model.Film;
-import filmorate.service.interfaces.LikesManager;
+import filmorate.model.Genre;
+import filmorate.service.interfaces.FilmService;
+import filmorate.service.interfaces.GenreService;
+import filmorate.service.interfaces.LikeService;
+import filmorate.service.interfaces.MpaService;
 import filmorate.utils.enums.FilmSort;
+import filmorate.utils.exceptions.filmExceptions.FilmNotFoundException;
+import filmorate.utils.interfaces.FilmStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @Primary
 @Service
 @RequiredArgsConstructor
-public class FilmDbService implements LikesManager {
-    private final JdbcTemplate jdbcTemplate;
+public class FilmDbService implements FilmService {
+    private final LikeService likeService;
+    private final FilmStorage filmStorage;
+    private final MpaService mpaService;
+    private final GenreService genreService;
 
     @Override
-    public void addLike(Long userLikedId, Long filmId) {
-        String sqlQuery = "INSERT INTO film_like (film_id, user_id) VALUES (?, ?)";
+    public Film createFilm(Film film) {
+        Film createdFilm = filmStorage.create(film);
 
-        jdbcTemplate.update(sqlQuery,
-                filmId,
-                userLikedId
-        );
+        updateFilmMpa(film);
+        updateFilmGenres(film);
+
+        return createdFilm;
     }
 
     @Override
-    public void removeLike(Long userLikedId, Long filmId) {
-        String sqlSelectQuery = "SELECT film_id, user_id FROM film_like WHERE film_id = ? AND user_id = ?";
-        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sqlSelectQuery, filmId, userLikedId);
+    public Film updateFilm(Film film) {
+        try {
+            filmStorage.update(film);
 
-        if (sqlRowSet.first()) {
-            String sqlDeleteQuery = "DELETE FROM film_like WHERE film_id = ? AND user_id = ?";
+            updateFilmMpa(film);
+            updateFilmGenres(film);
 
-            jdbcTemplate.update(sqlDeleteQuery,
-                    filmId,
-                    userLikedId
-            );
-        } else {
-            throw new LikeNotFoundException("Лайк не найден");
+            return filmStorage.findById(film.getId());
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
+            throw new FilmNotFoundException("Фильм не найден");
         }
     }
 
     @Override
+    public Collection<Film> getAllFilms() {
+        return filmStorage.getAll();
+    }
+
+    @Override
+    public Film findFilmById(Long id) {
+        try {
+            return filmStorage.findById(id);
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
+            throw new FilmNotFoundException("Фильм не найден");
+        }
+    }
+
+    @Override
+    public void updateFilmGenres(Film film) {
+        setUniqueGenres(film);
+        genreService.updateFilmGenres(film);
+    }
+
+    @Override
+    public void updateFilmMpa(Film film) {
+        mpaService.updateFilmMpa(film);
+    }
+
+    @Override
+    public void addLike(Long userLikedId, Long filmId) {
+        likeService.addLike(userLikedId, filmId);
+    }
+
+    @Override
+    public void removeLike(Long userLikedId, Long filmId) {
+        likeService.removeLike(userLikedId, filmId);
+    }
+
+    @Override
     public Collection<Film> getPopular(Integer size, FilmSort sort) {
+        return filmStorage.getPopular(size, sort);
+    }
 
-        String sqlQuery = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, fr.rating_id, m.name AS rating_name, fg.genre_id, g.name AS genre_name, COUNT(fl.user_id) AS count " +
-                "FROM films AS f " +
-                "LEFT JOIN film_rating AS fr ON fr.film_id = f.film_id " +
-                "LEFT JOIN mpa AS m ON m.rating_id = fr.rating_id " +
-                "LEFT JOIN film_genre AS fg ON fg.film_id = f.film_id " +
-                "LEFT JOIN film_like AS fl ON fl.film_id = f.film_id " +
-                "LEFT JOIN genres AS g ON g.genre_id = fg.genre_id " +
-                "GROUP BY f.film_id " +
-                "ORDER BY COUNT(fl.user_id) DESC " +
-                "LIMIT ?";
+    private void setUniqueGenres(Film film) {
+        if (film.getGenres() == null) {
+            return;
+        }
 
-        return jdbcTemplate.query(sqlQuery, new FilmExtractor(), size);
+        List<Genre> genres = new ArrayList<>();
+
+        for (Genre filmGenre : film.getGenres()) {
+            if (!genres.contains(filmGenre)) {
+                genres.add(filmGenre);
+            }
+        }
+
+        film.setGenres(genres);
     }
 }

@@ -1,13 +1,12 @@
 package filmorate.service;
 
 import filmorate.dao.FilmDbStorage;
+import filmorate.exceptions.filmExceptions.FilmNotFoundException;
 import filmorate.model.Film;
 import filmorate.model.Genre;
 import filmorate.utils.enums.FilmSort;
-import filmorate.exceptions.filmExceptions.FilmNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 
 @Slf4j
-@Primary
 @Service
 @RequiredArgsConstructor
 public class FilmDbService {

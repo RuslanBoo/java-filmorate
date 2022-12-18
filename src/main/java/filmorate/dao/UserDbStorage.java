@@ -2,7 +2,6 @@ package filmorate.dao;
 
 import filmorate.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -17,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Objects;
 
-@Primary
 @Component
 @RequiredArgsConstructor
 public class UserDbStorage {

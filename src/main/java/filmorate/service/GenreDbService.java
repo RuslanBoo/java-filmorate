@@ -1,12 +1,11 @@
 package filmorate.service;
 
 import filmorate.dao.GenreDbStorage;
+import filmorate.exceptions.filmExceptions.GenreNotFoundException;
 import filmorate.model.Film;
 import filmorate.model.Genre;
-import filmorate.exceptions.filmExceptions.GenreNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,6 @@ import java.util.Collection;
 
 @Slf4j
 @Service
-@Primary
 @RequiredArgsConstructor
 public class GenreDbService {
     private final GenreDbStorage genreDbStorage;

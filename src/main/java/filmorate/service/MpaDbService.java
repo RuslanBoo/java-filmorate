@@ -1,12 +1,11 @@
 package filmorate.service;
 
 import filmorate.dao.MpaDbStorage;
+import filmorate.exceptions.filmExceptions.MpaNotFoundException;
 import filmorate.model.Film;
 import filmorate.model.Mpa;
-import filmorate.exceptions.filmExceptions.MpaNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,6 @@ import java.util.Collection;
 
 @Slf4j
 @Service
-@Primary
 @RequiredArgsConstructor
 public class MpaDbService{
     private final MpaDbStorage mpaDbStorage;

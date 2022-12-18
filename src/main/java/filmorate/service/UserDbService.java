@@ -2,14 +2,13 @@ package filmorate.service;
 
 import filmorate.dao.FriendDbStorage;
 import filmorate.dao.UserDbStorage;
-import filmorate.model.Friend;
-import filmorate.model.User;
 import filmorate.exceptions.friendshipException.FriendshipAlreadyExistException;
 import filmorate.exceptions.friendshipException.FriendshipNotFoundException;
 import filmorate.exceptions.userExceptions.UserNotFoundException;
+import filmorate.model.Friend;
+import filmorate.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,6 @@ import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
-@Primary
 @RequiredArgsConstructor
 public class UserDbService{
     private final UserDbStorage userDbStorage;

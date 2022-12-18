@@ -1,8 +1,8 @@
 package filmorate.controller;
 
 import filmorate.model.User;
-import filmorate.service.interfaces.UserService;
-import filmorate.utils.exceptions.userExceptions.UserNotFoundException;
+import filmorate.service.UserDbService;
+import filmorate.exceptions.userExceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,49 +22,49 @@ import java.util.Collection;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userService;
+    private final UserDbService userDbService;
 
     @GetMapping
     public Collection<User> getAllUsers() {
-        return userService.getAll();
+        return userDbService.getAll();
     }
 
     @GetMapping("/{id}")
     public User getUserById(
             @PathVariable(name = "id") Long userId) {
-        return userService.findById(userId);
+        return userDbService.findById(userId);
     }
 
     @GetMapping("/{id}/friends")
     public Collection<User> getFriends(
             @PathVariable(name = "id") Long userId) {
-        return userService.getFriends(userId);
+        return userDbService.getFriends(userId);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public Collection<User> getCommonFriends(
             @PathVariable(name = "id") Long userId,
             @PathVariable(name = "otherId") Long otherUserId) {
-        return userService.getCommonFriends(userId, otherUserId);
+        return userDbService.getCommonFriends(userId, otherUserId);
     }
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
-        return userService.create(user);
+        return userDbService.create(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) throws UserNotFoundException {
-        return userService.update(user);
+        return userDbService.update(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(@PathVariable(name = "id") Long userId, @PathVariable(name = "friendId") Long friendId) {
-        userService.addFriend(userId, friendId);
+        userDbService.addFriend(userId, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public void removeFriend(@PathVariable(name = "id") Long userId, @PathVariable(name = "friendId") Long friendId) {
-        userService.removeFriend(userId, friendId);
+        userDbService.removeFriend(userId, friendId);
     }
 }

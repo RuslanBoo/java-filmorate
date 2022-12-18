@@ -1,4 +1,4 @@
-package filmorate.utils.exceptions.filmExceptions;
+package filmorate.exceptions.filmExceptions;
 
 public class FilmNotFoundException extends RuntimeException {
     public FilmNotFoundException(String message) {

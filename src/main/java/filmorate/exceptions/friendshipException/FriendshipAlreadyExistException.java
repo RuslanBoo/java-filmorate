@@ -1,4 +1,4 @@
-package filmorate.utils.exceptions.friendshipException;
+package filmorate.exceptions.friendshipException;
 
 public class FriendshipAlreadyExistException extends RuntimeException {
     public FriendshipAlreadyExistException(String message) {

@@ -1,14 +1,10 @@
 package filmorate.service;
 
+import filmorate.dao.FilmDbStorage;
 import filmorate.model.Film;
 import filmorate.model.Genre;
-import filmorate.service.interfaces.FilmService;
-import filmorate.service.interfaces.GenreService;
-import filmorate.service.interfaces.LikeService;
-import filmorate.service.interfaces.MpaService;
 import filmorate.utils.enums.FilmSort;
-import filmorate.utils.exceptions.filmExceptions.FilmNotFoundException;
-import filmorate.utils.interfaces.FilmStorage;
+import filmorate.exceptions.filmExceptions.FilmNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -23,15 +19,14 @@ import java.util.List;
 @Primary
 @Service
 @RequiredArgsConstructor
-public class FilmDbService implements FilmService {
-    private final LikeService likeService;
-    private final FilmStorage filmStorage;
-    private final MpaService mpaService;
-    private final GenreService genreService;
+public class FilmDbService {
+    private final LikeDbService likeDbService;
+    private final FilmDbStorage filmDbStorage;
+    private final MpaDbService mpaDbService;
+    private final GenreDbService genreDbService;
 
-    @Override
     public Film createFilm(Film film) {
-        Film createdFilm = filmStorage.create(film);
+        Film createdFilm = filmDbStorage.create(film);
 
         updateFilmMpa(film);
         updateFilmGenres(film);
@@ -39,58 +34,50 @@ public class FilmDbService implements FilmService {
         return createdFilm;
     }
 
-    @Override
     public Film updateFilm(Film film) {
         try {
-            filmStorage.update(film);
+            filmDbStorage.update(film);
 
             updateFilmMpa(film);
             updateFilmGenres(film);
 
-            return filmStorage.findById(film.getId());
+            return filmDbStorage.findById(film.getId());
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             throw new FilmNotFoundException("Фильм не найден");
         }
     }
 
-    @Override
     public Collection<Film> getAllFilms() {
-        return filmStorage.getAll();
+        return filmDbStorage.getAll();
     }
 
-    @Override
     public Film findFilmById(Long id) {
         try {
-            return filmStorage.findById(id);
+            return filmDbStorage.findById(id);
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             throw new FilmNotFoundException("Фильм не найден");
         }
     }
 
-    @Override
     public void updateFilmGenres(Film film) {
         setUniqueGenres(film);
-        genreService.updateFilmGenres(film);
+        genreDbService.updateFilmGenres(film);
     }
 
-    @Override
     public void updateFilmMpa(Film film) {
-        mpaService.updateFilmMpa(film);
+        mpaDbService.updateFilmMpa(film);
     }
 
-    @Override
     public void addLike(Long userLikedId, Long filmId) {
-        likeService.addLike(userLikedId, filmId);
+        likeDbService.addLike(userLikedId, filmId);
     }
 
-    @Override
     public void removeLike(Long userLikedId, Long filmId) {
-        likeService.removeLike(userLikedId, filmId);
+        likeDbService.removeLike(userLikedId, filmId);
     }
 
-    @Override
     public Collection<Film> getPopular(Integer size, FilmSort sort) {
-        return filmStorage.getPopular(size, sort);
+        return filmDbStorage.getPopular(size, sort);
     }
 
     private void setUniqueGenres(Film film) {

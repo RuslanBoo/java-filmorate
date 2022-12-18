@@ -1,7 +1,6 @@
 package filmorate.dao;
 
 import filmorate.model.User;
-import filmorate.utils.interfaces.UserStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,7 +20,7 @@ import java.util.Objects;
 @Primary
 @Component
 @RequiredArgsConstructor
-public class UserDbStorage implements UserStorage {
+public class UserDbStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
@@ -34,7 +33,6 @@ public class UserDbStorage implements UserStorage {
                 .build();
     }
 
-    @Override
     public User create(User user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         String sqlQuery = "INSERT INTO users (email, login, name, birthday) " +
@@ -54,7 +52,6 @@ public class UserDbStorage implements UserStorage {
         return user;
     }
 
-    @Override
     public User update(User user) throws EmptyResultDataAccessException {
         String sqlUpdateQuery = "UPDATE users " +
                 "SET user_id = ?, email = ?, login = ?, name = ?, birthday = ? " +
@@ -72,19 +69,16 @@ public class UserDbStorage implements UserStorage {
         return findById(user.getId());
     }
 
-    @Override
     public Collection<User> getAll() {
         String sqlQuery = "SELECT user_id, email, login, name, birthday FROM users";
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser);
     }
 
-    @Override
     public User findById(Long id) throws EmptyResultDataAccessException {
         String sqlQuery = "SELECT user_id, email, login, name, birthday FROM users WHERE user_id = ?";
         return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
     }
 
-    @Override
     public Collection<User> getFriends(Long userId) {
         String sqlQuery = "SELECT u.user_id, u.email, u.login, u.name, u.birthday " +
                 "FROM users as u " +

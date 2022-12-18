@@ -1,7 +1,7 @@
 package filmorate.controller;
 
 import filmorate.model.Mpa;
-import filmorate.service.interfaces.MpaService;
+import filmorate.service.MpaDbService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,16 +16,16 @@ import java.util.Collection;
 @RequestMapping("/mpa")
 @RequiredArgsConstructor
 public class MpaController {
-    private final MpaService mpaService;
+    private final MpaDbService mpaDbService;
 
     @GetMapping
     public Collection<Mpa> getAllMpa() {
-        return mpaService.getAll();
+        return mpaDbService.getAll();
     }
 
     @GetMapping("/{id}")
     public Mpa getMpaById(@PathVariable Long id) {
-        return mpaService.findById(id);
+        return mpaDbService.findById(id);
     }
 }
 

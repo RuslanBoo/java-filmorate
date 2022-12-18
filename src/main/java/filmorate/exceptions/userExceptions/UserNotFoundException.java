@@ -1,4 +1,4 @@
-package filmorate.utils.exceptions.userExceptions;
+package filmorate.exceptions.userExceptions;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message) {

@@ -2,7 +2,6 @@ package filmorate.dao;
 
 import filmorate.model.Film;
 import filmorate.model.Genre;
-import filmorate.utils.interfaces.GenresStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,7 +18,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class GenreStorage implements GenresStorage {
+public class GenreDbStorage {
     private final JdbcTemplate jdbcTemplate;
 
     private Genre mapRowToGenre(ResultSet resultSet, int rowNum) throws SQLException {
@@ -29,25 +28,21 @@ public class GenreStorage implements GenresStorage {
         );
     }
 
-    @Override
     public Genre create(Genre genre) {
         log.error("Метод create не поддерживается в текущей реализации");
         throw new RuntimeException("Метод не поддерживается в текущей реализации");
     }
 
-    @Override
     public Genre update(Genre genre) {
         log.error("Метод update не поддерживается в текущей реализации");
         throw new RuntimeException("Метод не поддерживается в текущей реализации");
     }
 
-    @Override
     public Collection<Genre> getAll() {
         String sqlQuery = "SELECT genre_id, name FROM genres";
         return jdbcTemplate.query(sqlQuery, this::mapRowToGenre);
     }
 
-    @Override
     public Genre findById(Long id) throws EmptyResultDataAccessException {
         String sqlQuery = "SELECT genre_id, name FROM genres WHERE genre_id = ?";
         return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToGenre, id);

@@ -1,4 +1,4 @@
-package filmorate.utils.exceptions.userExceptions;
+package filmorate.exceptions.userExceptions;
 
 public class UserNotFoundInFriendsException extends RuntimeException {
     public UserNotFoundInFriendsException(String message) {

@@ -1,7 +1,6 @@
 package filmorate.dao;
 
 import filmorate.model.Friend;
-import filmorate.utils.interfaces.FriendStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,7 +12,7 @@ import java.sql.SQLException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class FriendDbStorage implements FriendStorage {
+public class FriendDbStorage{
     private final JdbcTemplate jdbcTemplate;
 
     public Friend mapRowToFriend(ResultSet resultSet, int rowNum) throws SQLException {
@@ -32,7 +31,6 @@ public class FriendDbStorage implements FriendStorage {
         );
     }
 
-    @Override
     public void removeFriend(Long userId, Long friendId) {
         String sqlDeleteQuery = "DELETE FROM user_friend WHERE user_from = ? AND user_to = ?";
 

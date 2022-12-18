@@ -4,10 +4,10 @@ import filmorate.model.Film;
 import filmorate.model.Genre;
 import filmorate.model.Mpa;
 import filmorate.model.User;
-import filmorate.service.interfaces.FilmService;
-import filmorate.service.interfaces.GenreService;
-import filmorate.service.interfaces.MpaService;
-import filmorate.service.interfaces.UserService;
+import filmorate.service.FilmDbService;
+import filmorate.service.GenreDbService;
+import filmorate.service.MpaDbService;
+import filmorate.service.UserDbService;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmoRateUserServiceTests {
-    private final UserService userService;
+    private final UserDbService userDbService;
     private final Long expectedUserId = 1L;
 
     @Test
@@ -37,14 +37,14 @@ class FilmoRateUserServiceTests {
                 .birthday(LocalDate.of(1990, 10, 10))
                 .build();
 
-        User createdUser = userService.create(user);
+        User createdUser = userDbService.create(user);
         assertThat(createdUser).isEqualTo(user);
     }
 
     @Test
     public void testFindUserById() {
 
-        Optional<User> userOptional = Optional.ofNullable(userService.findById(expectedUserId));
+        Optional<User> userOptional = Optional.ofNullable(userDbService.findById(expectedUserId));
 
         assertThat(userOptional)
                 .isPresent()
@@ -63,7 +63,7 @@ class FilmoRateUserServiceTests {
                 .birthday(LocalDate.of(1990, 10, 10))
                 .build();
 
-        User createdUser = userService.create(user);
+        User createdUser = userDbService.create(user);
 
         User updateUser = User.builder()
                 .id(expectedUserId)
@@ -73,7 +73,7 @@ class FilmoRateUserServiceTests {
                 .birthday(LocalDate.of(1991, 11, 11))
                 .build();
 
-        User updatedUser = userService.update(updateUser);
+        User updatedUser = userDbService.update(updateUser);
         assertThat(updatedUser).isEqualTo(updateUser);
     }
 }
@@ -82,7 +82,7 @@ class FilmoRateUserServiceTests {
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmoRateFilmServiceTests {
-    private final FilmService filmService;
+    private final FilmDbService filmDbService;
     private final Long expectedFilmId = 1L;
 
     @Test
@@ -97,14 +97,14 @@ class FilmoRateFilmServiceTests {
                 .releaseDate(LocalDate.of(2010, 10 ,10))
                 .build();
 
-        Film createdFilm = filmService.createFilm(film);
+        Film createdFilm = filmDbService.createFilm(film);
         assertThat(createdFilm).isEqualTo(film);
     }
 
     @Test
     public void testFindFilmById() {
 
-        Optional<Film> filmOptional = Optional.ofNullable(filmService.findFilmById(expectedFilmId));
+        Optional<Film> filmOptional = Optional.ofNullable(filmDbService.findFilmById(expectedFilmId));
 
         assertThat(filmOptional)
                 .isPresent()
@@ -126,7 +126,7 @@ class FilmoRateFilmServiceTests {
                 .releaseDate(LocalDate.of(2010, 10 ,10))
                 .build();
 
-        Film createdFilm = filmService.createFilm(film);
+        Film createdFilm = filmDbService.createFilm(film);
 
         Film updateFilm = Film.builder()
                 .id(expectedFilmId)
@@ -138,7 +138,7 @@ class FilmoRateFilmServiceTests {
                 .releaseDate(LocalDate.of(2010, 11 ,11))
                 .build();
 
-        Film updatedFilm = filmService.updateFilm(updateFilm);
+        Film updatedFilm = filmDbService.updateFilm(updateFilm);
         assertThat(updatedFilm).isEqualTo(updateFilm);
     }
 }
@@ -147,12 +147,12 @@ class FilmoRateFilmServiceTests {
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmoRateMpaServiceTests {
-    private final MpaService mpaService;
+    private final MpaDbService mpaDbService;
 
     @Test
     public void testFindMpaById() {
 
-        Optional<Mpa> mpaOptional = Optional.ofNullable(mpaService.findById(1L));
+        Optional<Mpa> mpaOptional = Optional.ofNullable(mpaDbService.findById(1L));
 
         assertThat(mpaOptional)
                 .isPresent()
@@ -169,12 +169,12 @@ class FilmoRateMpaServiceTests {
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmoRateGenreServiceTests {
-    private final GenreService genreService;
+    private final GenreDbService genreDbService;
 
     @Test
     public void testFindGenreById() {
 
-        Optional<Genre> filmGenre = Optional.ofNullable(genreService.findById(1L));
+        Optional<Genre> filmGenre = Optional.ofNullable(genreDbService.findById(1L));
 
         assertThat(filmGenre)
                 .isPresent()

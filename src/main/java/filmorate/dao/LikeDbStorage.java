@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class LikeStorage implements filmorate.utils.interfaces.LikeStorage {
+public class LikeDbStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public SqlRowSet findLikeByIds(Long userLikedId, Long filmId) {

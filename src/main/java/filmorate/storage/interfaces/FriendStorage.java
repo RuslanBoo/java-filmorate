@@ -1,4 +1,4 @@
-package filmorate.dao;
+package filmorate.storage.interfaces;
 
 import filmorate.model.Friend;
 

@@ -1,6 +1,6 @@
 package filmorate.service;
 
-import filmorate.dao.FriendStorage;
+import filmorate.storage.interfaces.FriendStorage;
 import filmorate.exceptions.friendshipException.FriendshipAlreadyExistException;
 import filmorate.exceptions.friendshipException.FriendshipNotFoundException;
 import filmorate.exceptions.userExceptions.UserNotFoundException;

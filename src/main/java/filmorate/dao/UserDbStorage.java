@@ -3,6 +3,7 @@ package filmorate.dao;
 import filmorate.model.User;
 import filmorate.storage.interfaces.UserStorage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -18,6 +19,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 @Component
+@Primary
 @RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;

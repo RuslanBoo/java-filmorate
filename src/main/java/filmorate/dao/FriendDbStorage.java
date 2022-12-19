@@ -1,6 +1,7 @@
 package filmorate.dao;
 
 import filmorate.model.Friend;
+import filmorate.storage.interfaces.FriendStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;

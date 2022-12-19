@@ -5,6 +5,7 @@ import filmorate.storage.interfaces.FilmStorage;
 import filmorate.utils.enums.FilmSort;
 import filmorate.utils.extractor.FilmExtractor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
+@Primary
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;

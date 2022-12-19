@@ -1,6 +1,7 @@
 package filmorate.dao;
 
 import filmorate.model.Film;
+import filmorate.storage.interfaces.FilmStorage;
 import filmorate.utils.enums.FilmSort;
 import filmorate.utils.extractor.FilmExtractor;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,10 @@ import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-public class FilmDbStorage{
+public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
 
+    @Override
     public Film create(Film film) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         String sqlInsertQuery = "INSERT INTO films (name, description, release_date, duration) " +
@@ -40,6 +42,7 @@ public class FilmDbStorage{
         return film;
     }
 
+    @Override
     public Film update(Film film) throws EmptyResultDataAccessException {
         String sqlFilmUpdateQuery = "UPDATE films AS f " +
                 "SET film_id = ?, name = ?, description = ?, release_date = ?, duration = ? " +
@@ -54,9 +57,10 @@ public class FilmDbStorage{
                 film.getId()
         );
 
-        return findById(film.getId());
+        return getById(film.getId());
     }
 
+    @Override
     public Collection<Film> getAll() {
         String sqlQuery = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, fr.rating_id, m.name AS rating_name, fg.genre_id, g.name AS genre_name " +
                 "FROM films AS f " +
@@ -68,7 +72,8 @@ public class FilmDbStorage{
         return jdbcTemplate.query(sqlQuery, new FilmExtractor());
     }
 
-    public Film findById(Long id) throws EmptyResultDataAccessException {
+    @Override
+    public Film getById(Long id) throws EmptyResultDataAccessException {
         String sqlQuery = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, fr.rating_id, m.name AS rating_name, fg.genre_id, g.name AS genre_name " +
                 "FROM films AS f " +
                 "LEFT JOIN film_rating AS fr ON fr.film_id = f.film_id " +

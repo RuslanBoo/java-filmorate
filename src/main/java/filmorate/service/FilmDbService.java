@@ -1,6 +1,5 @@
 package filmorate.service;
 
-import filmorate.dao.FilmDbStorage;
 import filmorate.exceptions.filmExceptions.FilmNotFoundException;
 import filmorate.model.Film;
 import filmorate.model.Genre;
@@ -20,12 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilmDbService implements FilmStorage {
     private final LikeDbService likeDbService;
-    private final FilmDbStorage filmDbStorage;
+    private final FilmStorage filmStorage;
     private final MpaDbService mpaDbService;
     private final GenreDbService genreDbService;
 
     public Film create(Film film) {
-        Film createdFilm = filmDbStorage.create(film);
+        Film createdFilm = filmStorage.create(film);
 
         updateFilmMpa(film);
         updateFilmGenres(film);
@@ -35,24 +34,24 @@ public class FilmDbService implements FilmStorage {
 
     public Film update(Film film) {
         try {
-            filmDbStorage.update(film);
+            filmStorage.update(film);
 
             updateFilmMpa(film);
             updateFilmGenres(film);
 
-            return filmDbStorage.findById(film.getId());
+            return filmStorage.getById(film.getId());
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             throw new FilmNotFoundException("Фильм не найден");
         }
     }
 
     public Collection<Film> getAll() {
-        return filmDbStorage.getAll();
+        return filmStorage.getAll();
     }
 
     public Film getById(Long id) {
         try {
-            return filmDbStorage.findById(id);
+            return filmStorage.getById(id);
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             throw new FilmNotFoundException("Фильм не найден");
         }
@@ -76,7 +75,7 @@ public class FilmDbService implements FilmStorage {
     }
 
     public Collection<Film> getPopular(Integer size, FilmSort sort) {
-        return filmDbStorage.getPopular(size, sort);
+        return filmStorage.getPopular(size, sort);
     }
 
     private void setUniqueGenres(Film film) {

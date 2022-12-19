@@ -55,4 +55,9 @@ public class InMemoryUserStorage implements UserStorage {
         }
         return users.get(id);
     }
+
+    @Override
+    public Collection<User> getFriends(Long userId) {
+        return null;
+    }
 }

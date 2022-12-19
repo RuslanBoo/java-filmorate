@@ -1,9 +1,9 @@
 package filmorate.service;
 
-import filmorate.dao.GenreDbStorage;
 import filmorate.exceptions.filmExceptions.GenreNotFoundException;
 import filmorate.model.Film;
 import filmorate.model.Genre;
+import filmorate.storage.interfaces.GenreStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -16,24 +16,24 @@ import java.util.Collection;
 @Service
 @RequiredArgsConstructor
 public class GenreDbService {
-    private final GenreDbStorage genreDbStorage;
+    private final GenreStorage genreStorage;
 
     public Collection<Genre> getAll() {
-        return genreDbStorage.getAll();
+        return genreStorage.getAll();
     }
 
-    public Genre findById(Long id) {
+    public Genre getById(Long id) {
         try {
-            return genreDbStorage.findById(id);
+            return genreStorage.getById(id);
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             throw new GenreNotFoundException("Жанр не найден");
         }
     }
 
     public void updateFilmGenres(@Valid Film film) {
-        genreDbStorage.deleteFilmGenres(film);
+        genreStorage.deleteFilmGenres(film);
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
-            genreDbStorage.setFilmGenres(film.getId(), film.getGenres());
+            genreStorage.setFilmGenres(film.getId(), film.getGenres());
         }
     }
 

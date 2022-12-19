@@ -12,7 +12,7 @@ import java.sql.SQLException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class FriendDbStorage{
+public class FriendDbStorage implements FriendStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public Friend mapRowToFriend(ResultSet resultSet, int rowNum) throws SQLException {

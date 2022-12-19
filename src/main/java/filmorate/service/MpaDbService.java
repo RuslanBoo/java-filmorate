@@ -1,9 +1,9 @@
 package filmorate.service;
 
-import filmorate.dao.MpaDbStorage;
 import filmorate.exceptions.filmExceptions.MpaNotFoundException;
 import filmorate.model.Film;
 import filmorate.model.Mpa;
+import filmorate.storage.interfaces.MpaStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -16,24 +16,24 @@ import java.util.Collection;
 @Service
 @RequiredArgsConstructor
 public class MpaDbService{
-    private final MpaDbStorage mpaDbStorage;
+    private final MpaStorage mpaStorage;
 
     public Collection<Mpa> getAll() {
-        return mpaDbStorage.getAll();
+        return mpaStorage.getAll();
     }
 
-    public Mpa findById(Long id) {
+    public Mpa getById(Long id) {
         try {
-            return mpaDbStorage.findById(id);
+            return mpaStorage.getById(id);
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             throw new MpaNotFoundException("Рейтинг не найден");
         }
     }
 
     public void updateFilmMpa(@Valid Film film) {
-        mpaDbStorage.deleteFilmMpa(film.getId());
+        mpaStorage.deleteFilmMpa(film.getId());
         if (film.getMpa() != null) {
-            mpaDbStorage.setFilmMpa(film);
+            mpaStorage.setFilmMpa(film);
         }
     }
 }

@@ -1,7 +1,6 @@
 package filmorate.service;
 
-import filmorate.dao.FriendDbStorage;
-import filmorate.dao.UserDbStorage;
+import filmorate.dao.FriendStorage;
 import filmorate.exceptions.friendshipException.FriendshipAlreadyExistException;
 import filmorate.exceptions.friendshipException.FriendshipNotFoundException;
 import filmorate.exceptions.userExceptions.UserNotFoundException;
@@ -21,21 +20,21 @@ import static java.util.stream.Collectors.toList;
 @Service
 @RequiredArgsConstructor
 public class UserDbService implements UserStorage {
-    private final UserDbStorage userDbStorage;
-    private final FriendDbStorage friendDbStorage;
+    private final UserStorage userStorage;
+    private final FriendStorage friendStorage;
 
     public void removeFriend(Long userId, Long friendId) {
-        friendDbStorage.removeFriend(userId, friendId);
+        friendStorage.removeFriend(userId, friendId);
     }
 
     public User create(User user) {
-        return userDbStorage.create(user);
+        return userStorage.create(user);
     }
 
     public User update(User user) {
         try {
             getById(user.getId());
-            userDbStorage.update(user);
+            userStorage.update(user);
             return getById(user.getId());
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             throw new UserNotFoundException("Пользователь не найден");
@@ -43,43 +42,43 @@ public class UserDbService implements UserStorage {
     }
 
     public Collection<User> getAll() {
-        return userDbStorage.getAll();
+        return userStorage.getAll();
     }
 
     @Override
     public User getById(Long id) {
         try {
-            return userDbStorage.findById(id);
+            return userStorage.getById(id);
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             throw new UserNotFoundException("Пользователь не найден");
         }
     }
 
     public Collection<User> getFriends(Long userId) {
-        return userDbStorage.getFriends(userId);
+        return userStorage.getFriends(userId);
     }
 
     public Collection<User> getCommonFriends(Long userId, Long otherUserId) {
-        return userDbStorage.getFriends(userId)
+        return userStorage.getFriends(userId)
                 .stream()
-                .filter(userDbStorage.getFriends(otherUserId)::contains)
+                .filter(userStorage.getFriends(otherUserId)::contains)
                 .collect(toList());
     }
 
     public void addFriend(Long userId, Long friendId) {
         try {
-            Friend friendship = friendDbStorage.findFriend(userId, friendId);
+            Friend friendship = friendStorage.findFriend(userId, friendId);
 
             if (friendship == null) {
                 throw new FriendshipNotFoundException("Заявка не найдена");
             } else if (friendship.getUserTo() == userId && !friendship.isApplied()) {
-                friendDbStorage.applyFriend(userId, friendId);
+                friendStorage.applyFriend(userId, friendId);
             } else {
                 log.error(String.format("Пользоватеть с id: %d уже отправил заявку в друзья пользователю с id: %d", userId, friendId));
                 throw new FriendshipAlreadyExistException("Заявка в друзья уже отправлена");
             }
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
-            friendDbStorage.addFriend(userId, friendId);
+            friendStorage.addFriend(userId, friendId);
         }
     }
 }

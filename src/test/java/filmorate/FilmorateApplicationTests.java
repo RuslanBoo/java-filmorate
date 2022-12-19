@@ -152,7 +152,7 @@ class FilmoRateMpaServiceTests {
     @Test
     public void testFindMpaById() {
 
-        Optional<Mpa> mpaOptional = Optional.ofNullable(mpaDbService.findById(1L));
+        Optional<Mpa> mpaOptional = Optional.ofNullable(mpaDbService.getById(1L));
 
         assertThat(mpaOptional)
                 .isPresent()
@@ -174,7 +174,7 @@ class FilmoRateGenreServiceTests {
     @Test
     public void testFindGenreById() {
 
-        Optional<Genre> filmGenre = Optional.ofNullable(genreDbService.findById(1L));
+        Optional<Genre> filmGenre = Optional.ofNullable(genreDbService.getById(1L));
 
         assertThat(filmGenre)
                 .isPresent()

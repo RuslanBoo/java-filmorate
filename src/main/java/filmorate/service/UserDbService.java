@@ -7,6 +7,7 @@ import filmorate.exceptions.friendshipException.FriendshipNotFoundException;
 import filmorate.exceptions.userExceptions.UserNotFoundException;
 import filmorate.model.Friend;
 import filmorate.model.User;
+import filmorate.storage.interfaces.UserStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,7 +20,7 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserDbService{
+public class UserDbService implements UserStorage {
     private final UserDbStorage userDbStorage;
     private final FriendDbStorage friendDbStorage;
 
@@ -33,9 +34,9 @@ public class UserDbService{
 
     public User update(User user) {
         try {
-            findById(user.getId());
+            getById(user.getId());
             userDbStorage.update(user);
-            return findById(user.getId());
+            return getById(user.getId());
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             throw new UserNotFoundException("Пользователь не найден");
         }
@@ -45,7 +46,8 @@ public class UserDbService{
         return userDbStorage.getAll();
     }
 
-    public User findById(Long id) {
+    @Override
+    public User getById(Long id) {
         try {
             return userDbStorage.findById(id);
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {

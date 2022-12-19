@@ -32,7 +32,7 @@ public class UserController {
     @GetMapping("/{id}")
     public User getUserById(
             @PathVariable(name = "id") Long userId) {
-        return userDbService.findById(userId);
+        return userDbService.getById(userId);
     }
 
     @GetMapping("/{id}/friends")

@@ -44,7 +44,7 @@ class FilmoRateUserServiceTests {
     @Test
     public void testFindUserById() {
 
-        Optional<User> userOptional = Optional.ofNullable(userDbService.findById(expectedUserId));
+        Optional<User> userOptional = Optional.ofNullable(userDbService.getById(expectedUserId));
 
         assertThat(userOptional)
                 .isPresent()
@@ -97,14 +97,14 @@ class FilmoRateFilmServiceTests {
                 .releaseDate(LocalDate.of(2010, 10 ,10))
                 .build();
 
-        Film createdFilm = filmDbService.createFilm(film);
+        Film createdFilm = filmDbService.create(film);
         assertThat(createdFilm).isEqualTo(film);
     }
 
     @Test
     public void testFindFilmById() {
 
-        Optional<Film> filmOptional = Optional.ofNullable(filmDbService.findFilmById(expectedFilmId));
+        Optional<Film> filmOptional = Optional.ofNullable(filmDbService.getById(expectedFilmId));
 
         assertThat(filmOptional)
                 .isPresent()
@@ -126,7 +126,7 @@ class FilmoRateFilmServiceTests {
                 .releaseDate(LocalDate.of(2010, 10 ,10))
                 .build();
 
-        Film createdFilm = filmDbService.createFilm(film);
+        Film createdFilm = filmDbService.create(film);
 
         Film updateFilm = Film.builder()
                 .id(expectedFilmId)
@@ -138,7 +138,7 @@ class FilmoRateFilmServiceTests {
                 .releaseDate(LocalDate.of(2010, 11 ,11))
                 .build();
 
-        Film updatedFilm = filmDbService.updateFilm(updateFilm);
+        Film updatedFilm = filmDbService.update(updateFilm);
         assertThat(updatedFilm).isEqualTo(updateFilm);
     }
 }

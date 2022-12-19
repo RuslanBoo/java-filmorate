@@ -28,12 +28,12 @@ public class FilmController {
 
     @GetMapping
     public Collection<Film> getAllFilms() {
-        return filmDbService.getAllFilms();
+        return filmDbService.getAll();
     }
 
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable Long id) {
-        return filmDbService.findFilmById(id);
+        return filmDbService.getById(id);
     }
 
     @GetMapping("/popular")
@@ -45,12 +45,12 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
-        return filmDbService.createFilm(film);
+        return filmDbService.create(film);
     }
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) throws FilmNotFoundException {
-        return filmDbService.updateFilm(film);
+        return filmDbService.update(film);
     }
 
     @PutMapping("/{id}/like/{userId}")

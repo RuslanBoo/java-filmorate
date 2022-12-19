@@ -4,6 +4,7 @@ import filmorate.dao.FilmDbStorage;
 import filmorate.exceptions.filmExceptions.FilmNotFoundException;
 import filmorate.model.Film;
 import filmorate.model.Genre;
+import filmorate.storage.interfaces.FilmStorage;
 import filmorate.utils.enums.FilmSort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,13 +18,13 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FilmDbService {
+public class FilmDbService implements FilmStorage {
     private final LikeDbService likeDbService;
     private final FilmDbStorage filmDbStorage;
     private final MpaDbService mpaDbService;
     private final GenreDbService genreDbService;
 
-    public Film createFilm(Film film) {
+    public Film create(Film film) {
         Film createdFilm = filmDbStorage.create(film);
 
         updateFilmMpa(film);
@@ -32,7 +33,7 @@ public class FilmDbService {
         return createdFilm;
     }
 
-    public Film updateFilm(Film film) {
+    public Film update(Film film) {
         try {
             filmDbStorage.update(film);
 
@@ -45,11 +46,11 @@ public class FilmDbService {
         }
     }
 
-    public Collection<Film> getAllFilms() {
+    public Collection<Film> getAll() {
         return filmDbStorage.getAll();
     }
 
-    public Film findFilmById(Long id) {
+    public Film getById(Long id) {
         try {
             return filmDbStorage.findById(id);
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {

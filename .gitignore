@@ -7,6 +7,7 @@
 *.zip
 *.tar.gz
 *.rar
+*.DS_Store
 hs_err_pid*
 out/
 
@@ -43,3 +44,5 @@ build/
 
 ### VS Code ###
 .vscode/
+/db/filmorate.mv.db
+/.mvn/

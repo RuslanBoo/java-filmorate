@@ -3,6 +3,7 @@ package filmorate.storage;
 import filmorate.exceptions.filmExceptions.FilmNotFoundException;
 import filmorate.model.Film;
 import filmorate.storage.interfaces.FilmStorage;
+import filmorate.utils.enums.FilmSort;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -50,5 +51,10 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new FilmNotFoundException(String.format("Фильм для обновления с id %d не найден", id));
         }
         return films.get(id);
+    }
+
+    @Override
+    public Collection<Film> getPopular(Integer size, FilmSort sort) {
+        return null;
     }
 }
